@@ -21,11 +21,23 @@ struct UptoApp: App {
                 .environment(model)
                 .environment(library)
         } label: {
-            Image(systemName: presence.isBusy ? "antenna.radiowaves.left.and.right" : "antenna.radiowaves.left.and.right.slash")
+            MenuBarLabel(presence: presence)
         }
 
         Settings {
             SettingsView()
         }
+    }
+}
+
+// A separate view so the icon reliably re-renders on state changes.
+// The antenna only shows unslashed while the presence is actually live.
+private struct MenuBarLabel: View {
+    let presence: PresenceController
+
+    var body: some View {
+        Image(systemName: presence.isReady
+            ? "antenna.radiowaves.left.and.right"
+            : "antenna.radiowaves.left.and.right.slash")
     }
 }
