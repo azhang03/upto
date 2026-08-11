@@ -19,3 +19,13 @@ Early development. There is no release yet.
 ## Requirements
 
 - macOS 14 Sonoma or later
+
+## Build from source
+
+You need macOS 14 or later and the Xcode Command Line Tools.
+
+1. Clone the repository.
+2. Run `./scripts/build-app.sh`.
+3. Open `build/upto.app`.
+
+The build is not signed with a developer certificate. When you open the app for the first time, right-click it and select Open.
