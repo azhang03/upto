@@ -2,10 +2,11 @@ import AppKit
 import SwiftUI
 
 struct MenuBarView: View {
+    @Environment(PresenceController.self) private var presence
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Text("Not connected")
+        Text(presence.statusText)
 
         Divider()
 

@@ -1,6 +1,10 @@
 import SwiftUI
+import UptoCore
 
 struct EditorShellView: View {
+    @Environment(PresenceController.self) private var presence
+    @AppStorage("applicationID") private var applicationID = ""
+
     var body: some View {
         HSplitView {
             editor
@@ -11,19 +15,38 @@ struct EditorShellView: View {
         .frame(minWidth: 720, minHeight: 480)
         .toolbar {
             ToolbarItem(placement: .status) {
-                Label("Not connected", systemImage: "circle.fill")
-                    .foregroundStyle(.secondary)
+                Label(presence.statusText, systemImage: "circle.fill")
+                    .foregroundStyle(presence.statusColor)
             }
             ToolbarItem(placement: .primaryAction) {
-                Button("Update") {}
-                    .disabled(true)
+                Button("Send test presence") {
+                    presence.sendTestPresence()
+                }
+                .disabled(!presence.isReady)
+            }
+            ToolbarItem {
+                Button("Clear") {
+                    presence.clearPresence()
+                }
+                .disabled(!presence.isReady)
             }
         }
     }
 
+    // The Application section below is the temporary hookup for testing
+    // the connection. The full editor replaces this form.
     private var editor: some View {
         Form {
-            Section("Application") { placeholder }
+            Section("Application") {
+                TextField("Application ID", text: $applicationID)
+                    .disabled(presence.isBusy)
+                connectButton
+                if let error = presence.lastError {
+                    Text(error)
+                        .font(.callout)
+                        .foregroundStyle(.red)
+                }
+            }
             Section("Activity") { placeholder }
             Section("Images") { placeholder }
             Section("Timestamps") { placeholder }
@@ -31,6 +54,20 @@ struct EditorShellView: View {
             Section("Buttons") { placeholder }
         }
         .formStyle(.grouped)
+    }
+
+    @ViewBuilder
+    private var connectButton: some View {
+        if presence.isBusy {
+            Button("Disconnect") {
+                presence.disconnect()
+            }
+        } else {
+            Button("Connect") {
+                presence.connect(applicationID: applicationID)
+            }
+            .disabled(applicationID.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
     }
 
     private var preview: some View {

@@ -5,13 +5,18 @@ let package = Package(
     name: "upto",
     platforms: [.macOS(.v14)],
     targets: [
+        .target(
+            name: "UptoCore",
+            path: "Sources/UptoCore"
+        ),
         .executableTarget(
             name: "upto",
+            dependencies: ["UptoCore"],
             path: "Sources/upto"
         ),
         .testTarget(
             name: "uptoTests",
-            dependencies: ["upto"],
+            dependencies: ["UptoCore"],
             path: "Tests/uptoTests"
         ),
     ]
