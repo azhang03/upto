@@ -47,7 +47,7 @@ struct ActivitySection: View {
             .connectorSource(.stateURL)
 
             Picker("Status shows", selection: $model.draft.statusDisplay) {
-                Text("App name").tag(StatusDisplayType.name)
+                Text("Name").tag(StatusDisplayType.name)
                 Text("State").tag(StatusDisplayType.state)
                 Text("Details").tag(StatusDisplayType.details)
             }
