@@ -17,7 +17,8 @@ struct EditorShellView: View {
                 activity: activity,
                 issues: model.issues,
                 focusedTargets: focusedTargets,
-                displayName: presence.userDisplayName ?? "You"
+                displayName: presence.userDisplayName ?? "You",
+                appliedAt: model.appliedAt
             )
             .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
         }

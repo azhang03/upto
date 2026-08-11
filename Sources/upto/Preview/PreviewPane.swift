@@ -6,12 +6,13 @@ struct PreviewPane: View {
     let issues: [ActivityValidationIssue]
     let focusedTargets: Set<PreviewTarget>
     let displayName: String
+    let appliedAt: Date?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
-                    let model = PresencePreviewModel(activity: activity, appName: "Your app", now: context.date)
+                    let model = PresencePreviewModel(activity: activity, appName: "Your app", now: context.date, autoTimerStart: appliedAt)
                     VStack(alignment: .leading, spacing: 16) {
                         labeled("Profile") {
                             PresenceCardView(model: model, focusedTargets: focusedTargets)

@@ -62,7 +62,7 @@ public struct PresencePreviewModel: Equatable, Sendable {
     public let buttons: [String]
     public let memberListText: String
 
-    public init(activity: Activity, appName: String, now: Date = Date()) {
+    public init(activity: Activity, appName: String, now: Date = Date(), autoTimerStart: Date? = nil) {
         headerText = Self.verbLine(type: activity.type, subject: appName)
 
         detailsLine = activity.details.map {
@@ -100,6 +100,14 @@ public struct PresencePreviewModel: Equatable, Sendable {
             progress = nil
         } else if let start {
             timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - start)) + " elapsed")
+            progress = nil
+        } else if activity.type == .listening {
+            // The music card counts up on its own even when no
+            // timestamps are sent. Discord starts at the moment the
+            // activity is set, so the preview counts from the last
+            // update, or sits at zero before the first one.
+            let autoStart = autoTimerStart.map { Int64(($0.timeIntervalSince1970 * 1000).rounded()) } ?? nowMS
+            timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - autoStart)) + " elapsed")
             progress = nil
         } else {
             timer = nil

@@ -102,7 +102,7 @@ extension Activity {
             let hasStart = timestamps?.start != nil
             let hasEnd = timestamps?.end != nil
             if hasStart != hasEnd {
-                issues.append(.init(field: .timestamps, severity: .warning, message: "A progress bar needs both a start and an end time."))
+                issues.append(.init(field: .timestamps, severity: .warning, message: "Discord shows a counter for this. Set both a start and an end time to show a progress bar instead."))
             }
         }
 

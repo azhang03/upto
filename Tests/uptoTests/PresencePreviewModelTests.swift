@@ -60,6 +60,20 @@ import Testing
         #expect(model.progress == nil)
     }
 
+    @Test func listeningCountsUpAutomaticallyWithoutTimestamps() {
+        let applied = Date(timeIntervalSince1970: 1_723_400_069)
+        var model = PresencePreviewModel(activity: Activity(type: .listening), appName: "App", now: now, autoTimerStart: applied)
+        #expect(model.timer == .elapsed("0:31 elapsed"))
+
+        // Before the first update the counter sits at zero.
+        model = PresencePreviewModel(activity: Activity(type: .listening), appName: "App", now: now)
+        #expect(model.timer == .elapsed("0:00 elapsed"))
+
+        // Other types still show nothing without timestamps.
+        model = PresencePreviewModel(activity: Activity(type: .watching), appName: "App", now: now, autoTimerStart: applied)
+        #expect(model.timer == nil)
+    }
+
     @Test func memberListTextFollowsStatusDisplay() {
         var activity = Activity(type: .listening, details: "Song title", state: "Artist name")
         activity.statusDisplayType = .state

@@ -12,6 +12,7 @@ final class EditorModel {
     }
 
     private(set) var lastAppliedDraft: ActivityDraft?
+    private(set) var appliedAt: Date?
 
     init() {
         if let data = UserDefaults.standard.data(forKey: Self.draftKey),
@@ -46,10 +47,12 @@ final class EditorModel {
 
     func markApplied() {
         lastAppliedDraft = draft
+        appliedAt = Date()
     }
 
     func markCleared() {
         lastAppliedDraft = nil
+        appliedAt = nil
     }
 
     private func save() {
