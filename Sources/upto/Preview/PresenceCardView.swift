@@ -22,6 +22,13 @@ struct PresenceCardView: View {
                 imageStack
 
                 VStack(alignment: .leading, spacing: 2) {
+                    if let appName = model.appNameLine {
+                        Text(appName)
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .connectorTarget(.cardAppName)
+                    }
                     if let details = model.detailsLine {
                         lineText(details)
                             .connectorTarget(.cardDetails)
@@ -90,29 +97,34 @@ struct PresenceCardView: View {
             .padding(.top, 4)
             .connectorTarget(.cardProgressBar)
         } else if let timer = model.timer {
-            Group {
-                switch timer {
-                case .elapsed(let text), .remaining(let text):
-                    Text(text)
-                }
+            HStack(spacing: 4) {
+                Image(systemName: timerIconName)
+                    .font(.system(size: 10))
+                Text(timer.text)
             }
-            .font(.caption)
+            .font(.caption.weight(.medium))
             .foregroundStyle(Color(red: 0.23, green: 0.87, blue: 0.55))
             .connectorTarget(.cardTimer)
         }
     }
 
+    private var timerIconName: String {
+        switch model.timerIcon {
+        case .controller: return "gamecontroller.fill"
+        case .musicNote: return "music.note"
+        case .hourglass: return "hourglass"
+        case .clock, nil: return "clock"
+        }
+    }
+
+    // Only one tooltip bubble can show at a time because focus drives
+    // it, so both float in the same spot above the images where they
+    // cannot collide with the time or progress text.
     private var imageStack: some View {
         ZStack(alignment: .bottomTrailing) {
             imagePlaceholder(present: model.largeImagePresent, isLink: model.largeImageIsLink)
                 .frame(width: 60, height: 60)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(alignment: .top) {
-                    if focusedTargets.contains(.cardLargeImageTooltip) {
-                        tooltipBubble(text: model.largeTooltip, target: .cardLargeImageTooltip)
-                            .offset(y: -34)
-                    }
-                }
                 .connectorTarget(.cardLargeImage)
                 .help(model.largeTooltip ?? "")
 
@@ -121,17 +133,21 @@ struct PresenceCardView: View {
                     .frame(width: 22, height: 22)
                     .clipShape(Circle())
                     .overlay(Circle().stroke(cardBackground, lineWidth: 3))
-                    .overlay(alignment: .bottom) {
-                        if focusedTargets.contains(.cardSmallImageTooltip) {
-                            tooltipBubble(text: model.smallTooltip, target: .cardSmallImageTooltip)
-                                .offset(y: 26)
-                        }
-                    }
                     .connectorTarget(.cardSmallImage)
                     .help(model.smallTooltip ?? "")
                     .offset(x: 6, y: 6)
             }
         }
+        .overlay(alignment: .top) {
+            if focusedTargets.contains(.cardLargeImageTooltip) {
+                tooltipBubble(text: model.largeTooltip, target: .cardLargeImageTooltip)
+                    .offset(y: -30)
+            } else if focusedTargets.contains(.cardSmallImageTooltip) {
+                tooltipBubble(text: model.smallTooltip, target: .cardSmallImageTooltip)
+                    .offset(y: -30)
+            }
+        }
+        .zIndex(1)
         .padding(.trailing, 6)
     }
 

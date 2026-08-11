@@ -38,7 +38,10 @@ enum EditorFocus: Hashable {
         switch self {
         case .applicationID:
             let statusDisplay = activity.statusDisplayType ?? .name
-            return statusDisplay == .name ? [.cardHeader, .memberListStatus] : [.cardHeader]
+            // Playing shows the app name as its own line in the card
+            // body. The other types carry it in the header.
+            let nameTarget: PreviewTarget = activity.type == .playing ? .cardAppName : .cardHeader
+            return statusDisplay == .name ? [nameTarget, .memberListStatus] : [nameTarget]
         case .activityType:
             return [.cardHeader]
         case .statusDisplay:

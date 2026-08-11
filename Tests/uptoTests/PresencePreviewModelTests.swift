@@ -6,15 +6,19 @@ import Testing
     private let now = Date(timeIntervalSince1970: 1_723_400_100)
 
     @Test func headerVerbPerType() {
-        let cases: [(ActivityType, String)] = [
-            (.playing, "Playing Your app"),
-            (.listening, "Listening to Your app"),
-            (.watching, "Watching Your app"),
-            (.competing, "Competing in Your app"),
+        // Playing keeps a bare header and moves the app name into its
+        // own line in the card body. The other types name the app in
+        // the header.
+        let cases: [(ActivityType, String, String?)] = [
+            (.playing, "Playing", "Your app"),
+            (.listening, "Listening to Your app", nil),
+            (.watching, "Watching Your app", nil),
+            (.competing, "Competing in Your app", nil),
         ]
-        for (type, expected) in cases {
+        for (type, expectedHeader, expectedNameLine) in cases {
             let model = PresencePreviewModel(activity: Activity(type: type), appName: "Your app", now: now)
-            #expect(model.headerText == expected)
+            #expect(model.headerText == expectedHeader)
+            #expect(model.appNameLine == expectedNameLine)
         }
     }
 
@@ -44,34 +48,40 @@ import Testing
         activity.type = .playing
         model = PresencePreviewModel(activity: activity, appName: "App", now: now)
         #expect(model.progress == nil)
-        #expect(model.timer == .remaining("1:40 left"))
+        #expect(model.timer == .remaining("1:40"))
+        #expect(model.timerIcon == .hourglass)
     }
 
     @Test func elapsedTimerForStartOnly() {
         var activity = Activity(type: .playing)
         activity.timestamps = Timestamps(start: 1_723_400_000_000)
         let model = PresencePreviewModel(activity: activity, appName: "App", now: now)
-        #expect(model.timer == .elapsed("1:40 elapsed"))
+        #expect(model.timer == .elapsed("1:40"))
+        #expect(model.timerIcon == .controller)
     }
 
-    @Test func noTimestampsMeansNoTimer() {
-        let model = PresencePreviewModel(activity: Activity(type: .playing), appName: "App", now: now)
-        #expect(model.timer == nil)
-        #expect(model.progress == nil)
+    @Test func watchingAndCompetingShowNoTimerWithoutTimestamps() {
+        for type in [ActivityType.watching, .competing] {
+            let model = PresencePreviewModel(activity: Activity(type: type), appName: "App", now: now)
+            #expect(model.timer == nil)
+            #expect(model.progress == nil)
+        }
     }
 
-    @Test func listeningCountsUpAutomaticallyWithoutTimestamps() {
+    @Test func playingAndListeningCountUpAutomaticallyWithoutTimestamps() {
         let applied = Date(timeIntervalSince1970: 1_723_400_069)
+
         var model = PresencePreviewModel(activity: Activity(type: .listening), appName: "App", now: now, autoTimerStart: applied)
-        #expect(model.timer == .elapsed("0:31 elapsed"))
+        #expect(model.timer == .elapsed("0:31"))
+        #expect(model.timerIcon == .musicNote)
+
+        model = PresencePreviewModel(activity: Activity(type: .playing), appName: "App", now: now, autoTimerStart: applied)
+        #expect(model.timer == .elapsed("0:31"))
+        #expect(model.timerIcon == .controller)
 
         // Before the first update the counter sits at zero.
-        model = PresencePreviewModel(activity: Activity(type: .listening), appName: "App", now: now)
-        #expect(model.timer == .elapsed("0:00 elapsed"))
-
-        // Other types still show nothing without timestamps.
-        model = PresencePreviewModel(activity: Activity(type: .watching), appName: "App", now: now, autoTimerStart: applied)
-        #expect(model.timer == nil)
+        model = PresencePreviewModel(activity: Activity(type: .playing), appName: "App", now: now)
+        #expect(model.timer == .elapsed("0:00"))
     }
 
     @Test func memberListTextFollowsStatusDisplay() {

@@ -29,6 +29,21 @@ public struct PresencePreviewModel: Equatable, Sendable {
     public enum TimerLine: Equatable, Sendable {
         case elapsed(String)
         case remaining(String)
+
+        public var text: String {
+            switch self {
+            case .elapsed(let text), .remaining(let text):
+                return text
+            }
+        }
+    }
+
+    // The icon Discord draws next to the time.
+    public enum TimerIcon: Equatable, Sendable {
+        case controller
+        case musicNote
+        case hourglass
+        case clock
     }
 
     public struct ProgressInfo: Equatable, Sendable {
@@ -44,10 +59,14 @@ public struct PresencePreviewModel: Equatable, Sendable {
     }
 
     public let headerText: String
+    // Playing gives the app name its own bold line in the card body.
+    // The other types keep the name in the header.
+    public let appNameLine: String?
     public let detailsLine: LinkableLine?
     public let stateLine: LinkableLine?
     public let partySuffix: PartySuffix?
     public let timer: TimerLine?
+    public let timerIcon: TimerIcon?
     public let progress: ProgressInfo?
     public let largeImagePresent: Bool
     public let smallImagePresent: Bool
@@ -63,7 +82,13 @@ public struct PresencePreviewModel: Equatable, Sendable {
     public let memberListText: String
 
     public init(activity: Activity, appName: String, now: Date = Date(), autoTimerStart: Date? = nil) {
-        headerText = Self.verbLine(type: activity.type, subject: appName)
+        if activity.type == .playing {
+            headerText = "Playing"
+            appNameLine = appName
+        } else {
+            headerText = Self.verbLine(type: activity.type, subject: appName)
+            appNameLine = nil
+        }
 
         detailsLine = activity.details.map {
             LinkableLine(text: $0, isLink: activity.detailsURL != nil)
@@ -87,6 +112,13 @@ public struct PresencePreviewModel: Equatable, Sendable {
         let barShown = (activity.type == .listening || activity.type == .watching)
             && start != nil && end != nil
 
+        let countUpIcon: TimerIcon
+        switch activity.type {
+        case .playing: countUpIcon = .controller
+        case .listening: countUpIcon = .musicNote
+        case .watching, .competing: countUpIcon = .clock
+        }
+
         if barShown, let start, let end, end > start {
             let fraction = min(1, max(0, Double(nowMS - start) / Double(end - start)))
             progress = ProgressInfo(
@@ -95,22 +127,27 @@ public struct PresencePreviewModel: Equatable, Sendable {
                 totalText: Self.clockText(milliseconds: end - start)
             )
             timer = nil
+            timerIcon = nil
         } else if let end {
-            timer = .remaining(Self.clockText(milliseconds: max(0, end - nowMS)) + " left")
+            timer = .remaining(Self.clockText(milliseconds: max(0, end - nowMS)))
+            timerIcon = .hourglass
             progress = nil
         } else if let start {
-            timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - start)) + " elapsed")
+            timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - start)))
+            timerIcon = countUpIcon
             progress = nil
-        } else if activity.type == .listening {
-            // The music card counts up on its own even when no
-            // timestamps are sent. Discord starts at the moment the
-            // activity is set, so the preview counts from the last
-            // update, or sits at zero before the first one.
+        } else if activity.type == .playing || activity.type == .listening {
+            // These cards count up on their own even when no timestamps
+            // are sent. Discord starts at the moment the activity is
+            // set, so the preview counts from the last update, or sits
+            // at zero before the first one.
             let autoStart = autoTimerStart.map { Int64(($0.timeIntervalSince1970 * 1000).rounded()) } ?? nowMS
-            timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - autoStart)) + " elapsed")
+            timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - autoStart)))
+            timerIcon = countUpIcon
             progress = nil
         } else {
             timer = nil
+            timerIcon = nil
             progress = nil
         }
 

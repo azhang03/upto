@@ -3,6 +3,7 @@ import Foundation
 // The elements of the live preview a form field can point at.
 public enum PreviewTarget: Hashable, Sendable {
     case cardHeader
+    case cardAppName
     case cardDetails
     case cardState
     case cardLargeImage
