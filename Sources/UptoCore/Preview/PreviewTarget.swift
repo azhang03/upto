@@ -34,8 +34,11 @@ public func previewTargets(for field: ActivityField, in activity: Activity) -> [
     case .largeImage, .largeURL:
         return [.cardLargeImage]
     case .largeText:
-        // Listening promotes the large image text to a visible line.
-        return activity.type == .listening ? [.cardLargeTextLine] : [.cardLargeImageTooltip]
+        // Listening shows the large image text twice: as a visible
+        // third line under State and as the image hover tooltip.
+        return activity.type == .listening
+            ? [.cardLargeTextLine, .cardLargeImageTooltip]
+            : [.cardLargeImageTooltip]
     case .smallImage, .smallURL:
         return [.cardSmallImage]
     case .smallText:
