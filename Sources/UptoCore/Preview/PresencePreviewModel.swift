@@ -55,6 +55,10 @@ public struct PresencePreviewModel: Equatable, Sendable {
     public let smallImageIsLink: Bool
     public let largeTooltip: String?
     public let smallTooltip: String?
+    // For the Listening type Discord uses its music card layout, which
+    // shows the large image text as a visible third line under State
+    // instead of only a hover tooltip.
+    public let largeTextLine: String?
     public let buttons: [String]
     public let memberListText: String
 
@@ -108,6 +112,7 @@ public struct PresencePreviewModel: Equatable, Sendable {
         smallImageIsLink = activity.assets?.smallURL != nil
         largeTooltip = activity.assets?.largeText
         smallTooltip = activity.assets?.smallText
+        largeTextLine = activity.type == .listening ? activity.assets?.largeText : nil
 
         buttons = (activity.buttons ?? []).prefix(2).map(\.label)
 

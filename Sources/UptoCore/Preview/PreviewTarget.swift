@@ -9,6 +9,7 @@ public enum PreviewTarget: Hashable, Sendable {
     case cardSmallImage
     case cardLargeImageTooltip
     case cardSmallImageTooltip
+    case cardLargeTextLine
     case cardTimer
     case cardProgressBar
     case cardButton(Int)
@@ -33,7 +34,8 @@ public func previewTargets(for field: ActivityField, in activity: Activity) -> [
     case .largeImage, .largeURL:
         return [.cardLargeImage]
     case .largeText:
-        return [.cardLargeImageTooltip]
+        // Listening promotes the large image text to a visible line.
+        return activity.type == .listening ? [.cardLargeTextLine] : [.cardLargeImageTooltip]
     case .smallImage, .smallURL:
         return [.cardSmallImage]
     case .smallText:

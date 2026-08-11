@@ -92,6 +92,19 @@ import Testing
         #expect(!model.smallImageIsLink)
     }
 
+    @Test func largeTextBecomesThirdLineOnlyForListening() {
+        var activity = Activity(type: .listening, details: "Song", state: "Artist")
+        activity.assets = Assets(largeImage: "cover", largeText: "Album name")
+        var model = PresencePreviewModel(activity: activity, appName: "App", now: now)
+        #expect(model.largeTextLine == "Album name")
+        #expect(model.largeTooltip == "Album name")
+
+        activity.type = .playing
+        model = PresencePreviewModel(activity: activity, appName: "App", now: now)
+        #expect(model.largeTextLine == nil)
+        #expect(model.largeTooltip == "Album name")
+    }
+
     @Test func buttonsAreCappedAtTwoLabels() {
         var activity = Activity(type: .playing)
         activity.buttons = [

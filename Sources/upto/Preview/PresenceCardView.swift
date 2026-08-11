@@ -27,6 +27,13 @@ struct PresenceCardView: View {
                             .connectorTarget(.cardDetails)
                     }
                     stateLine
+                    if let third = model.largeTextLine {
+                        Text(third)
+                            .font(.callout)
+                            .foregroundStyle(.white.opacity(0.85))
+                            .lineLimit(1)
+                            .connectorTarget(.cardLargeTextLine)
+                    }
                     timeLine
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
