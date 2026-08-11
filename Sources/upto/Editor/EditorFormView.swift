@@ -12,6 +12,7 @@ struct EditorFormView: View {
             ImagesSection(model: model, focus: focus)
             TimestampsSection(model: model, focus: focus)
             PartySection(model: model, focus: focus)
+            ButtonsSection(model: model, focus: focus)
         }
         .formStyle(.grouped)
         .connectorViewport()

@@ -111,6 +111,9 @@ public struct ActivityButton: Codable, Sendable, Equatable, Hashable {
 
 public struct Activity: Codable, Sendable, Equatable, Hashable {
     public var type: ActivityType
+    // Overrides the application name Discord displays. Not in the
+    // official RPC docs, but the desktop client honors it.
+    public var name: String?
     public var details: String?
     public var detailsURL: String?
     public var state: String?
@@ -124,6 +127,7 @@ public struct Activity: Codable, Sendable, Equatable, Hashable {
 
     public init(
         type: ActivityType = .playing,
+        name: String? = nil,
         details: String? = nil, detailsURL: String? = nil,
         state: String? = nil, stateURL: String? = nil,
         statusDisplayType: StatusDisplayType? = nil,
@@ -134,6 +138,7 @@ public struct Activity: Codable, Sendable, Equatable, Hashable {
         instance: Bool? = nil
     ) {
         self.type = type
+        self.name = name
         self.details = details
         self.detailsURL = detailsURL
         self.state = state
@@ -148,6 +153,7 @@ public struct Activity: Codable, Sendable, Equatable, Hashable {
 
     enum CodingKeys: String, CodingKey {
         case type
+        case name
         case details
         case detailsURL = "details_url"
         case state
@@ -165,6 +171,7 @@ public struct Activity: Codable, Sendable, Equatable, Hashable {
     // rejects. Empty containers collapse to nil.
     public func normalized() -> Activity {
         var copy = self
+        copy.name = Self.cleaned(name)
         copy.details = Self.cleaned(details)
         copy.detailsURL = Self.cleaned(detailsURL)
         copy.state = Self.cleaned(state)

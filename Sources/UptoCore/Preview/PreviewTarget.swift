@@ -24,6 +24,11 @@ public func previewTargets(for field: ActivityField, in activity: Activity) -> [
     let statusDisplay = activity.statusDisplayType ?? .name
 
     switch field {
+    case .name:
+        // Playing shows the name as its own card line. The other types
+        // carry it in the header.
+        let nameTarget: PreviewTarget = activity.type == .playing ? .cardAppName : .cardHeader
+        return statusDisplay == .name ? [nameTarget, .memberListStatus] : [nameTarget]
     case .details:
         return statusDisplay == .details ? [.cardDetails, .memberListStatus] : [.cardDetails]
     case .detailsURL:

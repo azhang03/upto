@@ -109,6 +109,34 @@ import Testing
         #expect(rebuilt == original.normalized())
     }
 
+    @Test func nameFlowsThroughBuildAndBack() {
+        var draft = ActivityDraft()
+        draft.name = "  Malediction  "
+        let activity = draft.buildActivity()
+        #expect(activity.name == "Malediction")
+        #expect(ActivityDraft(activity: activity).name == "Malediction")
+    }
+
+    @Test func oldSavedDraftWithoutNewKeysStillDecodes() throws {
+        // A draft saved before the name and URL fields existed must not
+        // be lost when the app updates.
+        let oldJSON = Data("""
+        {"type":2,"statusDisplay":1,"details":"Song","state":"Artist","largeImage":"cover",
+         "largeText":"","smallImage":"","smallText":"","timestampMode":"off",
+         "customStart":0,"endEnabled":false,"customEnd":0,
+         "partyEnabled":false,"partyCurrent":"1","partyMax":"4",
+         "buttons":[{"label":"","url":""},{"label":"","url":""}]}
+        """.utf8)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .secondsSince1970
+        let draft = try decoder.decode(ActivityDraft.self, from: oldJSON)
+        #expect(draft.details == "Song")
+        #expect(draft.type == .listening)
+        #expect(draft.name == "")
+        #expect(draft.detailsURL == "")
+        #expect(draft.buttons.count == 2)
+    }
+
     @Test func codableRoundTripPreservesDraft() throws {
         var draft = ActivityDraft()
         draft.type = .watching

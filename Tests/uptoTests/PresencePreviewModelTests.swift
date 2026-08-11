@@ -22,6 +22,17 @@ import Testing
         }
     }
 
+    @Test func nameOverridesAppNameEverywhere() {
+        var activity = Activity(type: .playing, name: "Custom Name")
+        var model = PresencePreviewModel(activity: activity, appName: "Portal Name", now: now)
+        #expect(model.appNameLine == "Custom Name")
+        #expect(model.memberListText == "Playing Custom Name")
+
+        activity.type = .listening
+        model = PresencePreviewModel(activity: activity, appName: "Portal Name", now: now)
+        #expect(model.headerText == "Listening to Custom Name")
+    }
+
     @Test func partySuffixRendersOnlyOnPlaying() {
         var activity = Activity(type: .listening)
         activity.party = Party(size: PartySize(current: 1, max: 4))

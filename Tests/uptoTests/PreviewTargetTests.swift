@@ -17,6 +17,13 @@ import Testing
         return activity
     }
 
+    @Test func nameTargetsFollowTypeAndStatusDisplay() {
+        #expect(previewTargets(for: .name, in: activity(type: .playing)) == [.cardAppName, .memberListStatus])
+        #expect(previewTargets(for: .name, in: activity(type: .listening)) == [.cardHeader, .memberListStatus])
+        #expect(previewTargets(for: .name, in: activity(type: .playing, statusDisplay: .state)) == [.cardAppName])
+        #expect(previewTargets(for: .name, in: activity(type: .watching, statusDisplay: .details)) == [.cardHeader])
+    }
+
     @Test func detailsIncludesMemberListOnlyWhenStatusShowsDetails() {
         #expect(previewTargets(for: .details, in: activity(statusDisplay: .details)) == [.cardDetails, .memberListStatus])
         #expect(previewTargets(for: .details, in: activity(statusDisplay: .state)) == [.cardDetails])
@@ -70,7 +77,7 @@ import Testing
 
     @Test func everyFieldHasAtLeastOneTarget() {
         let fields: [ActivityField] = [
-            .details, .detailsURL, .state, .stateURL,
+            .name, .details, .detailsURL, .state, .stateURL,
             .largeImage, .largeText, .largeURL,
             .smallImage, .smallText, .smallURL,
             .timestamps, .party, .buttons, .buttonLabel(0), .buttonURL(0),

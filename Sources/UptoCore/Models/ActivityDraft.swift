@@ -21,6 +21,7 @@ public struct ActivityDraft: Codable, Equatable, Sendable {
     }
 
     public var type: ActivityType = .playing
+    public var name = ""
     public var statusDisplay: StatusDisplayType = .name
     public var details = ""
     public var detailsURL = ""
@@ -43,8 +44,50 @@ public struct ActivityDraft: Codable, Equatable, Sendable {
 
     public init() {}
 
+    enum CodingKeys: String, CodingKey {
+        case type, name, statusDisplay
+        case details, detailsURL, state, stateURL
+        case largeImage, largeText, largeURL
+        case smallImage, smallText, smallURL
+        case timestampMode, customStart, endEnabled, customEnd
+        case partyEnabled, partyCurrent, partyMax
+        case buttons
+    }
+
+    // Saved drafts from older app versions miss newer keys. Every field
+    // falls back to its default so an update never wipes a saved draft.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decodeIfPresent(ActivityType.self, forKey: .type) ?? .playing
+        name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
+        statusDisplay = try container.decodeIfPresent(StatusDisplayType.self, forKey: .statusDisplay) ?? .name
+        details = try container.decodeIfPresent(String.self, forKey: .details) ?? ""
+        detailsURL = try container.decodeIfPresent(String.self, forKey: .detailsURL) ?? ""
+        state = try container.decodeIfPresent(String.self, forKey: .state) ?? ""
+        stateURL = try container.decodeIfPresent(String.self, forKey: .stateURL) ?? ""
+        largeImage = try container.decodeIfPresent(String.self, forKey: .largeImage) ?? ""
+        largeText = try container.decodeIfPresent(String.self, forKey: .largeText) ?? ""
+        largeURL = try container.decodeIfPresent(String.self, forKey: .largeURL) ?? ""
+        smallImage = try container.decodeIfPresent(String.self, forKey: .smallImage) ?? ""
+        smallText = try container.decodeIfPresent(String.self, forKey: .smallText) ?? ""
+        smallURL = try container.decodeIfPresent(String.self, forKey: .smallURL) ?? ""
+        timestampMode = try container.decodeIfPresent(TimestampMode.self, forKey: .timestampMode) ?? .off
+        customStart = try container.decodeIfPresent(Date.self, forKey: .customStart) ?? Date(timeIntervalSince1970: 0)
+        endEnabled = try container.decodeIfPresent(Bool.self, forKey: .endEnabled) ?? false
+        customEnd = try container.decodeIfPresent(Date.self, forKey: .customEnd) ?? Date(timeIntervalSince1970: 0)
+        partyEnabled = try container.decodeIfPresent(Bool.self, forKey: .partyEnabled) ?? false
+        partyCurrent = try container.decodeIfPresent(String.self, forKey: .partyCurrent) ?? "1"
+        partyMax = try container.decodeIfPresent(String.self, forKey: .partyMax) ?? "4"
+        var loadedButtons = try container.decodeIfPresent([DraftButton].self, forKey: .buttons) ?? []
+        while loadedButtons.count < 2 {
+            loadedButtons.append(DraftButton())
+        }
+        buttons = loadedButtons
+    }
+
     public init(activity: Activity) {
         type = activity.type
+        name = activity.name ?? ""
         statusDisplay = activity.statusDisplayType ?? .name
         details = activity.details ?? ""
         detailsURL = activity.detailsURL ?? ""
@@ -83,6 +126,7 @@ public struct ActivityDraft: Codable, Equatable, Sendable {
 
     public func buildActivity(now: Date = Date()) -> Activity {
         var activity = Activity(type: type)
+        activity.name = name
         activity.details = details
         activity.detailsURL = detailsURL
         activity.state = state

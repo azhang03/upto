@@ -16,17 +16,35 @@ struct ActivitySection: View {
             .focused(focus, equals: .activityType)
             .connectorSource(.activityType)
 
+            ValidatedRow(issues: model.issues(for: .name)) {
+                TextField("Name", text: $model.draft.name, prompt: Text("Overrides the app name"))
+                    .focused(focus, equals: .activityName)
+            }
+            .connectorSource(.activityName)
+
             ValidatedRow(issues: model.issues(for: .details)) {
                 TextField("Details", text: $model.draft.details, prompt: Text("What are you doing?"))
                     .focused(focus, equals: .details)
             }
             .connectorSource(.details)
 
+            ValidatedRow(issues: model.issues(for: .detailsURL)) {
+                TextField("Details link", text: $model.draft.detailsURL, prompt: Text("Makes the details clickable"))
+                    .focused(focus, equals: .detailsURL)
+            }
+            .connectorSource(.detailsURL)
+
             ValidatedRow(issues: model.issues(for: .state)) {
                 TextField("State", text: $model.draft.state, prompt: Text("Second line"))
                     .focused(focus, equals: .state)
             }
             .connectorSource(.state)
+
+            ValidatedRow(issues: model.issues(for: .stateURL)) {
+                TextField("State link", text: $model.draft.stateURL, prompt: Text("Makes the state clickable"))
+                    .focused(focus, equals: .stateURL)
+            }
+            .connectorSource(.stateURL)
 
             Picker("Status shows", selection: $model.draft.statusDisplay) {
                 Text("App name").tag(StatusDisplayType.name)

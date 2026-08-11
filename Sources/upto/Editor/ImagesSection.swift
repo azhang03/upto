@@ -19,6 +19,12 @@ struct ImagesSection: View {
             }
             .connectorSource(.largeText)
 
+            ValidatedRow(issues: model.issues(for: .largeURL)) {
+                TextField("Large image link", text: $model.draft.largeURL, prompt: Text("Makes the image clickable"))
+                    .focused(focus, equals: .largeURL)
+            }
+            .connectorSource(.largeURL)
+
             ValidatedRow(issues: model.issues(for: .smallImage)) {
                 TextField("Small image", text: $model.draft.smallImage, prompt: Text("Asset key or image link"))
                     .focused(focus, equals: .smallImage)
@@ -30,6 +36,12 @@ struct ImagesSection: View {
                     .focused(focus, equals: .smallText)
             }
             .connectorSource(.smallText)
+
+            ValidatedRow(issues: model.issues(for: .smallURL)) {
+                TextField("Small image link", text: $model.draft.smallURL, prompt: Text("Makes the image clickable"))
+                    .focused(focus, equals: .smallURL)
+            }
+            .connectorSource(.smallURL)
         }
     }
 }

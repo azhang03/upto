@@ -1,6 +1,7 @@
 import Foundation
 
 public enum ActivityField: Sendable, Equatable, Hashable {
+    case name
     case details
     case detailsURL
     case state
@@ -50,6 +51,7 @@ extension Activity {
     public func validate() -> [ActivityValidationIssue] {
         var issues: [ActivityValidationIssue] = []
 
+        checkText(name, field: .name, name: "Name", into: &issues)
         checkText(details, field: .details, name: "Details", into: &issues)
         checkText(state, field: .state, name: "State", into: &issues)
         checkText(assets?.largeText, field: .largeText, name: "Large image text", into: &issues)

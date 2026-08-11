@@ -11,6 +11,13 @@ import Testing
         activity.validate().filter { $0.severity == .warning }.map(\.field)
     }
 
+    @Test func nameLengthBoundaries() {
+        #expect(errors(Activity(name: "x")) == [.name])
+        #expect(errors(Activity(name: "ok")).isEmpty)
+        #expect(errors(Activity(name: String(repeating: "a", count: 128))).isEmpty)
+        #expect(errors(Activity(name: String(repeating: "a", count: 129))) == [.name])
+    }
+
     @Test func detailsLengthBoundaries() {
         #expect(errors(Activity(details: "x")) == [.details])
         #expect(errors(Activity(details: "xy")).isEmpty)

@@ -82,11 +82,14 @@ public struct PresencePreviewModel: Equatable, Sendable {
     public let memberListText: String
 
     public init(activity: Activity, appName: String, now: Date = Date(), autoTimerStart: Date? = nil) {
+        // The name field overrides the application name everywhere the
+        // name appears.
+        let effectiveName = activity.name ?? appName
         if activity.type == .playing {
             headerText = "Playing"
-            appNameLine = appName
+            appNameLine = effectiveName
         } else {
-            headerText = Self.verbLine(type: activity.type, subject: appName)
+            headerText = Self.verbLine(type: activity.type, subject: effectiveName)
             appNameLine = nil
         }
 
@@ -162,11 +165,11 @@ public struct PresencePreviewModel: Equatable, Sendable {
         // field, falling back to the app name when that field is empty.
         switch activity.statusDisplayType ?? .name {
         case .name:
-            memberListText = Self.verbLine(type: activity.type, subject: appName)
+            memberListText = Self.verbLine(type: activity.type, subject: effectiveName)
         case .state:
-            memberListText = Self.verbLine(type: activity.type, subject: activity.state ?? appName)
+            memberListText = Self.verbLine(type: activity.type, subject: activity.state ?? effectiveName)
         case .details:
-            memberListText = Self.verbLine(type: activity.type, subject: activity.details ?? appName)
+            memberListText = Self.verbLine(type: activity.type, subject: activity.details ?? effectiveName)
         }
     }
 
