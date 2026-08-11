@@ -13,6 +13,11 @@ struct ApplicationSection: View {
                 .connectorSource(.applicationID)
                 .disabled(presence.isBusy)
             connectButton
+            if let guidance = presence.state.userGuidance {
+                Text(guidance)
+                    .font(.callout)
+                    .foregroundStyle(.orange)
+            }
             if let error = presence.lastError {
                 Text(error)
                     .font(.callout)

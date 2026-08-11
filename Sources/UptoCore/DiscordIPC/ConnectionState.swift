@@ -43,3 +43,17 @@ public enum ClientEvent: Sendable, Equatable {
     case activityAcknowledged
     case rpcError(code: Int, message: String)
 }
+
+extension ConnectionState {
+    // A short instruction for the states a user can fix themselves.
+    public var userGuidance: String? {
+        switch self {
+        case .backoff(_, .noSocketFound):
+            return "Start the Discord desktop app. The browser version does not accept connections."
+        case .failed(.invalidApplicationID):
+            return "Check the application ID. It must match an application in the Discord developer portal."
+        case .idle, .scanning, .ready, .backoff:
+            return nil
+        }
+    }
+}

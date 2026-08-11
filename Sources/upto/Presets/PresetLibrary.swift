@@ -75,6 +75,25 @@ final class PresetLibrary {
         }
     }
 
+    // The one shared path for switching presets, used by the editor
+    // toolbar and the menu bar. Loads the draft, reconnects when the
+    // preset carries a different application, and applies right away
+    // when a connection is up.
+    func activate(_ preset: Preset, model: EditorModel, presence: PresenceController) {
+        selectedID = preset.id
+        model.draft = preset.draft
+        let defaults = UserDefaults.standard
+        let currentAppID = defaults.string(forKey: "applicationID") ?? ""
+        if let presetAppID = preset.applicationID, !presetAppID.isEmpty, presetAppID != currentAppID {
+            defaults.set(presetAppID, forKey: "applicationID")
+            presence.connect(applicationID: presetAppID)
+        }
+        if presence.isBusy {
+            model.markApplied()
+            presence.apply(model.draft.buildActivity())
+        }
+    }
+
     private func perform(_ work: () throws -> Void) {
         do {
             try work()

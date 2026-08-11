@@ -9,8 +9,8 @@ extension UTType {
 
 struct EditorShellView: View {
     @Environment(PresenceController.self) private var presence
-    @State private var model = EditorModel()
-    @State private var library = PresetLibrary()
+    @Environment(EditorModel.self) private var model
+    @Environment(PresetLibrary.self) private var library
     @FocusState private var focus: EditorFocus?
     @AppStorage("applicationID") private var applicationID = ""
 
@@ -158,20 +158,8 @@ struct EditorShellView: View {
         }
     }
 
-    // Switching a preset loads it into the editor and pushes it to
-    // Discord right away when connected. A preset that carries its own
-    // application ID reconnects with that application first.
     private func switchTo(_ preset: Preset) {
-        library.selectedID = preset.id
-        model.draft = preset.draft
-        if let presetAppID = preset.applicationID, !presetAppID.isEmpty, presetAppID != applicationID {
-            applicationID = presetAppID
-            presence.connect(applicationID: presetAppID)
-        }
-        if presence.isBusy {
-            model.markApplied()
-            presence.apply(model.draft.buildActivity())
-        }
+        library.activate(preset, model: model, presence: presence)
     }
 
     private func importPresetFile(_ url: URL) {
