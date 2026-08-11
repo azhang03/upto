@@ -42,8 +42,9 @@ import Testing
         #expect(previewTargets(for: .smallText, in: activity()) == [.cardSmallImageTooltip])
     }
 
-    @Test func listeningShowsLargeTextAsLineAndTooltip() {
+    @Test func listeningAndCompetingShowLargeTextAsLineAndTooltip() {
         #expect(previewTargets(for: .largeText, in: activity(type: .listening)) == [.cardLargeTextLine, .cardLargeImageTooltip])
+        #expect(previewTargets(for: .largeText, in: activity(type: .competing)) == [.cardLargeTextLine, .cardLargeImageTooltip])
         #expect(previewTargets(for: .largeText, in: activity(type: .watching)) == [.cardLargeImageTooltip])
         #expect(previewTargets(for: .smallText, in: activity(type: .listening)) == [.cardSmallImageTooltip])
     }

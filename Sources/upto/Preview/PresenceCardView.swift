@@ -112,8 +112,9 @@ struct PresenceCardView: View {
         switch model.timerIcon {
         case .controller: return "gamecontroller.fill"
         case .musicNote: return "music.note"
+        case .tv: return "tv.fill"
         case .hourglass: return "hourglass"
-        case .clock, nil: return "clock"
+        case nil: return "clock"
         }
     }
 

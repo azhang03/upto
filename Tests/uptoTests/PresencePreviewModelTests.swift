@@ -60,28 +60,23 @@ import Testing
         #expect(model.timerIcon == .controller)
     }
 
-    @Test func watchingAndCompetingShowNoTimerWithoutTimestamps() {
-        for type in [ActivityType.watching, .competing] {
-            let model = PresencePreviewModel(activity: Activity(type: type), appName: "App", now: now)
-            #expect(model.timer == nil)
-            #expect(model.progress == nil)
-        }
-    }
-
-    @Test func playingAndListeningCountUpAutomaticallyWithoutTimestamps() {
+    @Test func everyTypeCountsUpAutomaticallyWithItsOwnIcon() {
         let applied = Date(timeIntervalSince1970: 1_723_400_069)
-
-        var model = PresencePreviewModel(activity: Activity(type: .listening), appName: "App", now: now, autoTimerStart: applied)
-        #expect(model.timer == .elapsed("0:31"))
-        #expect(model.timerIcon == .musicNote)
-
-        model = PresencePreviewModel(activity: Activity(type: .playing), appName: "App", now: now, autoTimerStart: applied)
-        #expect(model.timer == .elapsed("0:31"))
-        #expect(model.timerIcon == .controller)
+        let cases: [(ActivityType, PresencePreviewModel.TimerIcon)] = [
+            (.playing, .controller),
+            (.listening, .musicNote),
+            (.watching, .tv),
+            (.competing, .controller),
+        ]
+        for (type, icon) in cases {
+            let model = PresencePreviewModel(activity: Activity(type: type), appName: "App", now: now, autoTimerStart: applied)
+            #expect(model.timer == .elapsed("0:31"))
+            #expect(model.timerIcon == icon)
+        }
 
         // Before the first update the counter sits at zero.
-        model = PresencePreviewModel(activity: Activity(type: .playing), appName: "App", now: now)
-        #expect(model.timer == .elapsed("0:00"))
+        let idle = PresencePreviewModel(activity: Activity(type: .playing), appName: "App", now: now)
+        #expect(idle.timer == .elapsed("0:00"))
     }
 
     @Test func memberListTextFollowsStatusDisplay() {
@@ -116,17 +111,23 @@ import Testing
         #expect(!model.smallImageIsLink)
     }
 
-    @Test func largeTextBecomesThirdLineOnlyForListening() {
+    @Test func largeTextBecomesThirdLineForListeningAndCompeting() {
         var activity = Activity(type: .listening, details: "Song", state: "Artist")
         activity.assets = Assets(largeImage: "cover", largeText: "Album name")
-        var model = PresencePreviewModel(activity: activity, appName: "App", now: now)
-        #expect(model.largeTextLine == "Album name")
-        #expect(model.largeTooltip == "Album name")
 
-        activity.type = .playing
-        model = PresencePreviewModel(activity: activity, appName: "App", now: now)
-        #expect(model.largeTextLine == nil)
-        #expect(model.largeTooltip == "Album name")
+        for type in [ActivityType.listening, .competing] {
+            activity.type = type
+            let model = PresencePreviewModel(activity: activity, appName: "App", now: now)
+            #expect(model.largeTextLine == "Album name")
+            #expect(model.largeTooltip == "Album name")
+        }
+
+        for type in [ActivityType.playing, .watching] {
+            activity.type = type
+            let model = PresencePreviewModel(activity: activity, appName: "App", now: now)
+            #expect(model.largeTextLine == nil)
+            #expect(model.largeTooltip == "Album name")
+        }
     }
 
     @Test func buttonsAreCappedAtTwoLabels() {

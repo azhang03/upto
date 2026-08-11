@@ -42,8 +42,8 @@ public struct PresencePreviewModel: Equatable, Sendable {
     public enum TimerIcon: Equatable, Sendable {
         case controller
         case musicNote
+        case tv
         case hourglass
-        case clock
     }
 
     public struct ProgressInfo: Equatable, Sendable {
@@ -114,9 +114,9 @@ public struct PresencePreviewModel: Equatable, Sendable {
 
         let countUpIcon: TimerIcon
         switch activity.type {
-        case .playing: countUpIcon = .controller
+        case .playing, .competing: countUpIcon = .controller
         case .listening: countUpIcon = .musicNote
-        case .watching, .competing: countUpIcon = .clock
+        case .watching: countUpIcon = .tv
         }
 
         if barShown, let start, let end, end > start {
@@ -136,18 +136,14 @@ public struct PresencePreviewModel: Equatable, Sendable {
             timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - start)))
             timerIcon = countUpIcon
             progress = nil
-        } else if activity.type == .playing || activity.type == .listening {
-            // These cards count up on their own even when no timestamps
+        } else {
+            // Every card counts up on its own even when no timestamps
             // are sent. Discord starts at the moment the activity is
             // set, so the preview counts from the last update, or sits
             // at zero before the first one.
             let autoStart = autoTimerStart.map { Int64(($0.timeIntervalSince1970 * 1000).rounded()) } ?? nowMS
             timer = .elapsed(Self.clockText(milliseconds: max(0, nowMS - autoStart)))
             timerIcon = countUpIcon
-            progress = nil
-        } else {
-            timer = nil
-            timerIcon = nil
             progress = nil
         }
 
@@ -157,7 +153,8 @@ public struct PresencePreviewModel: Equatable, Sendable {
         smallImageIsLink = activity.assets?.smallURL != nil
         largeTooltip = activity.assets?.largeText
         smallTooltip = activity.assets?.smallText
-        largeTextLine = activity.type == .listening ? activity.assets?.largeText : nil
+        let usesThirdLine = activity.type == .listening || activity.type == .competing
+        largeTextLine = usesThirdLine ? activity.assets?.largeText : nil
 
         buttons = (activity.buttons ?? []).prefix(2).map(\.label)
 
