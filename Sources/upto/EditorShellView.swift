@@ -3,29 +3,39 @@ import UptoCore
 
 struct EditorShellView: View {
     @Environment(PresenceController.self) private var presence
-    @AppStorage("applicationID") private var applicationID = ""
+    @State private var model = EditorModel()
+    @FocusState private var focus: EditorFocus?
 
     var body: some View {
+        let activity = model.builtActivity
+        let focusedTargets = Set(focus?.previewTargets(in: activity) ?? [])
+
         HSplitView {
-            editor
-                .frame(minWidth: 320, idealWidth: 400)
-            preview
-                .frame(minWidth: 300, maxWidth: .infinity, maxHeight: .infinity)
+            EditorFormView(model: model, focus: $focus)
+                .frame(minWidth: 340, idealWidth: 430)
+            PreviewPane(
+                activity: activity,
+                issues: model.issues,
+                focusedTargets: focusedTargets,
+                displayName: presence.userDisplayName ?? "You"
+            )
+            .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(minWidth: 720, minHeight: 480)
+        .overlayPreferenceValue(ConnectorAnchorsKey.self) { anchors in
+            ConnectorOverlay(anchors: anchors, focus: focus, activity: activity)
+        }
+        .frame(minWidth: 780, minHeight: 520)
         .toolbar {
             ToolbarItem(placement: .status) {
                 Label(presence.statusText, systemImage: "circle.fill")
                     .foregroundStyle(presence.statusColor)
             }
             ToolbarItem(placement: .primaryAction) {
-                Button("Send test presence") {
-                    presence.sendTestPresence()
-                }
-                .disabled(!presence.isReady)
+                updateButton
             }
             ToolbarItem {
                 Button("Clear") {
+                    model.markCleared()
                     presence.clearPresence()
                 }
                 .disabled(!presence.isReady)
@@ -33,59 +43,17 @@ struct EditorShellView: View {
         }
     }
 
-    // The Application section below is the temporary hookup for testing
-    // the connection. The full editor replaces this form.
-    private var editor: some View {
-        Form {
-            Section("Application") {
-                TextField("Application ID", text: $applicationID)
-                    .disabled(presence.isBusy)
-                connectButton
-                if let error = presence.lastError {
-                    Text(error)
-                        .font(.callout)
-                        .foregroundStyle(.red)
-                }
+    private var updateButton: some View {
+        Button {
+            model.markApplied()
+            presence.apply(model.draft.buildActivity())
+        } label: {
+            if model.isDirty {
+                Text("Update")
+            } else {
+                Label("Applied", systemImage: "checkmark")
             }
-            Section("Activity") { placeholder }
-            Section("Images") { placeholder }
-            Section("Timestamps") { placeholder }
-            Section("Party") { placeholder }
-            Section("Buttons") { placeholder }
         }
-        .formStyle(.grouped)
-    }
-
-    @ViewBuilder
-    private var connectButton: some View {
-        if presence.isBusy {
-            Button("Disconnect") {
-                presence.disconnect()
-            }
-        } else {
-            Button("Connect") {
-                presence.connect(applicationID: applicationID)
-            }
-            .disabled(applicationID.trimmingCharacters(in: .whitespaces).isEmpty)
-        }
-    }
-
-    private var preview: some View {
-        VStack(spacing: 8) {
-            Text("Live preview")
-                .font(.headline)
-            Text("The preview appears here when the editor fields are ready.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(nsColor: .underPageBackgroundColor))
-    }
-
-    private var placeholder: some View {
-        Text("Not built yet")
-            .foregroundStyle(.tertiary)
+        .disabled(!presence.isReady || model.hasErrors)
     }
 }

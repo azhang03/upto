@@ -40,14 +40,19 @@ final class PresenceController {
         Task { await client.disconnect() }
     }
 
-    func sendTestPresence() {
-        var activity = Activity(type: .playing, details: "Testing upto", state: "It works")
-        activity.timestamps = Timestamps(start: Int64(Date().timeIntervalSince1970 * 1000))
+    func apply(_ activity: Activity) {
         submit(activity)
     }
 
     func clearPresence() {
         submit(nil)
+    }
+
+    var userDisplayName: String? {
+        if case .ready(let user) = state {
+            return user?.globalName ?? user?.username
+        }
+        return nil
     }
 
     private func submit(_ activity: Activity?) {
