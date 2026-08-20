@@ -40,8 +40,7 @@ struct EditorShellView: View {
         .frame(minWidth: 780, minHeight: 520)
         .toolbar {
             ToolbarItem(placement: .status) {
-                Label(presence.statusText, systemImage: "circle.fill")
-                    .foregroundStyle(presence.statusColor)
+                StatusPill(presence: presence)
             }
             ToolbarItem {
                 presetsMenu
@@ -54,6 +53,7 @@ struct EditorShellView: View {
                     model.markCleared()
                     presence.clearPresence()
                 }
+                .buttonStyle(PillButtonStyle(variant: .neutral))
                 .disabled(!presence.isReady)
             }
         }
@@ -99,6 +99,7 @@ struct EditorShellView: View {
                 Label("Applied", systemImage: "checkmark")
             }
         }
+        .buttonStyle(PillButtonStyle(variant: .accent))
         .disabled(!presence.isReady || model.hasErrors)
     }
 

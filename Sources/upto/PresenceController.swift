@@ -9,6 +9,7 @@ import UptoCore
 final class PresenceController {
     private(set) var state: ConnectionState = .idle
     private(set) var lastError: String?
+    private(set) var connectedSince: Date?
 
     private let client = DiscordIPCClient()
     private var listenTask: Task<Void, Never>?
@@ -21,6 +22,13 @@ final class PresenceController {
                 guard let self else { return }
                 switch event {
                 case .stateChanged(let newState):
+                    if case .ready = newState {
+                        if self.connectedSince == nil {
+                            self.connectedSince = Date()
+                        }
+                    } else {
+                        self.connectedSince = nil
+                    }
                     self.state = newState
                 case .rpcError(let code, let message):
                     self.lastError = "Discord error \(code): \(message)"
@@ -102,17 +110,6 @@ final class PresenceController {
     }
 
     var statusColor: Color {
-        switch state {
-        case .idle:
-            return .gray
-        case .scanning:
-            return .yellow
-        case .ready:
-            return .green
-        case .backoff:
-            return .orange
-        case .failed:
-            return .red
-        }
+        Theme.Colors.status(for: state)
     }
 }

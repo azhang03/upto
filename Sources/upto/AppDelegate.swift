@@ -7,6 +7,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     static var openHandler: (([URL]) -> Void)?
     static var pendingURLs: [URL] = []
 
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // The app ships dark only. The design tokens assume it.
+        NSApp.appearance = NSAppearance(named: .darkAqua)
+    }
+
     func application(_ application: NSApplication, open urls: [URL]) {
         if let handler = Self.openHandler {
             handler(urls)

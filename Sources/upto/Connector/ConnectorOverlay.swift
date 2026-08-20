@@ -21,10 +21,10 @@ struct ConnectorOverlay: View {
 
                     ForEach(Array(targetRects.enumerated()), id: \.offset) { _, rect in
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.accentColor.opacity(0.08))
+                            .fill(Theme.Colors.accent.opacity(0.08))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.accentColor, lineWidth: 2)
+                                    .stroke(Theme.Colors.accent, lineWidth: 2)
                             )
                             .frame(width: rect.width + 8, height: rect.height + 8)
                             .position(x: rect.midX, y: rect.midY)
@@ -38,9 +38,9 @@ struct ConnectorOverlay: View {
                         let start = CGPoint(x: fieldRect.maxX - 2, y: fieldRect.midY)
                         let end = CGPoint(x: target.minX - 6, y: target.midY)
                         ConnectorLine(from: start, to: end)
-                            .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                            .stroke(Theme.Colors.accent, style: StrokeStyle(lineWidth: 2, lineCap: .round))
                         Circle()
-                            .fill(Color.accentColor)
+                            .fill(Theme.Colors.accent)
                             .frame(width: 6, height: 6)
                             .position(start)
                     }
