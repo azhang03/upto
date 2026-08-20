@@ -6,22 +6,28 @@ struct PartySection: View {
     var focus: FocusState<EditorFocus?>.Binding
 
     var body: some View {
-        Section("Party") {
+        VStack(alignment: .leading, spacing: Theme.Spacing.l) {
             Toggle("Set a party size", isOn: $model.draft.partyEnabled)
+                .tint(Theme.Colors.accent)
 
             if model.draft.partyEnabled {
                 ValidatedRow(issues: model.issues(for: .party)) {
-                    partyField("In the party", text: $model.draft.partyCurrent, focusCase: .partyCurrent)
-                    partyField("Party limit", text: $model.draft.partyMax, focusCase: .partyMax)
+                    HStack(alignment: .top, spacing: Theme.Spacing.m) {
+                        partyField("In the party", text: $model.draft.partyCurrent, focusCase: .partyCurrent)
+                            .connectorSource(.partyCurrent)
+                        partyField("Party limit", text: $model.draft.partyMax, focusCase: .partyMax)
+                            .connectorSource(.partyMax)
+                    }
                 }
-                .connectorSource(.partyCurrent)
             }
         }
     }
 
     private func partyField(_ label: String, text: Binding<String>, focusCase: EditorFocus) -> some View {
-        HStack {
-            TextField(label, text: text)
+        UptoField(label: label, isFocused: focus.wrappedValue == focusCase) {
+            TextField("", text: text)
+                .textFieldStyle(.plain)
+                .foregroundStyle(Theme.Colors.textPrimary)
                 .focused(focus, equals: focusCase)
             Stepper(label) {
                 text.wrappedValue = String((Int(text.wrappedValue) ?? 1) + 1)

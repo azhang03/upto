@@ -29,7 +29,7 @@ struct EditorShellView: View {
                 newPresetName: $newPresetName
             )
             HSplitView {
-                EditorFormView(model: model, focus: $focus)
+                EditorPane(model: model, focus: $focus)
                     .frame(minWidth: 340, idealWidth: 430)
                 PreviewPane(
                     activity: activity,

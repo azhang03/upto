@@ -6,42 +6,42 @@ struct ImagesSection: View {
     var focus: FocusState<EditorFocus?>.Binding
 
     var body: some View {
-        Section("Images") {
-            ValidatedRow(issues: model.issues(for: .largeImage)) {
-                TextField("Large image", text: $model.draft.largeImage, prompt: Text("Asset key or image link"))
-                    .focused(focus, equals: .largeImage)
-            }
-            .connectorSource(.largeImage)
+        VStack(alignment: .leading, spacing: Theme.Spacing.l) {
+            EditorTextRow(
+                label: "Large image", prompt: "Asset key or image link",
+                text: $model.draft.largeImage, limit: 256,
+                focusCase: .largeImage, issues: model.issues(for: .largeImage), focus: focus
+            )
 
-            ValidatedRow(issues: model.issues(for: .largeText)) {
-                TextField("Large image text", text: $model.draft.largeText, prompt: Text("Tooltip on hover"))
-                    .focused(focus, equals: .largeText)
-            }
-            .connectorSource(.largeText)
+            EditorTextRow(
+                label: "Large image text", prompt: "Tooltip on hover",
+                text: $model.draft.largeText, limit: 128,
+                focusCase: .largeText, issues: model.issues(for: .largeText), focus: focus
+            )
 
-            ValidatedRow(issues: model.issues(for: .largeURL)) {
-                TextField("Large image link", text: $model.draft.largeURL, prompt: Text("Makes the image clickable"))
-                    .focused(focus, equals: .largeURL)
-            }
-            .connectorSource(.largeURL)
+            EditorTextRow(
+                label: "Large image link", prompt: "Makes the image clickable",
+                text: $model.draft.largeURL, limit: 512,
+                focusCase: .largeURL, issues: model.issues(for: .largeURL), focus: focus
+            )
 
-            ValidatedRow(issues: model.issues(for: .smallImage)) {
-                TextField("Small image", text: $model.draft.smallImage, prompt: Text("Asset key or image link"))
-                    .focused(focus, equals: .smallImage)
-            }
-            .connectorSource(.smallImage)
+            EditorTextRow(
+                label: "Small image", prompt: "Asset key or image link",
+                text: $model.draft.smallImage, limit: 256,
+                focusCase: .smallImage, issues: model.issues(for: .smallImage), focus: focus
+            )
 
-            ValidatedRow(issues: model.issues(for: .smallText)) {
-                TextField("Small image text", text: $model.draft.smallText, prompt: Text("Tooltip on hover"))
-                    .focused(focus, equals: .smallText)
-            }
-            .connectorSource(.smallText)
+            EditorTextRow(
+                label: "Small image text", prompt: "Tooltip on hover",
+                text: $model.draft.smallText, limit: 128,
+                focusCase: .smallText, issues: model.issues(for: .smallText), focus: focus
+            )
 
-            ValidatedRow(issues: model.issues(for: .smallURL)) {
-                TextField("Small image link", text: $model.draft.smallURL, prompt: Text("Makes the image clickable"))
-                    .focused(focus, equals: .smallURL)
-            }
-            .connectorSource(.smallURL)
+            EditorTextRow(
+                label: "Small image link", prompt: "Makes the image clickable",
+                text: $model.draft.smallURL, limit: 512,
+                focusCase: .smallURL, issues: model.issues(for: .smallURL), focus: focus
+            )
         }
     }
 }

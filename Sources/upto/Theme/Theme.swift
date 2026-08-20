@@ -19,6 +19,7 @@ enum Theme {
         static let textSecondary = Color.white.opacity(0.55)
         static let hairline = Color.white.opacity(0.09)
         static let destructive = Color(hex: 0xD96A5F)
+        static let warning = Color(hex: 0xD9A662)
 
         static func status(for state: ConnectionState) -> Color {
             switch state {

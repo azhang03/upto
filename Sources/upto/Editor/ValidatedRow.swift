@@ -12,7 +12,11 @@ struct ValidatedRow<Content: View>: View {
             ForEach(Array(issues.enumerated()), id: \.offset) { _, issue in
                 Text(issue.message)
                     .font(.footnote)
-                    .foregroundStyle(issue.severity == .error ? Color.red : Color.orange)
+                    .foregroundStyle(
+                        issue.severity == .error
+                            ? Theme.Colors.destructive
+                            : Theme.Colors.warning
+                    )
             }
         }
     }

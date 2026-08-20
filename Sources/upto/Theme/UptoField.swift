@@ -18,16 +18,18 @@ struct UptoField<Content: View>: View {
             }
             HStack(spacing: Theme.Spacing.s) {
                 content
-                if let count, let limit {
+                // The counter stays out of the way until the field has
+                // focus or the text runs past the limit.
+                if let count, let limit, isFocused || count > limit {
                     Text("\(count)/\(limit)")
                         .font(Theme.Fonts.mono)
                         .foregroundStyle(
-                            isFocused ? Theme.Colors.accent : Theme.Colors.textSecondary
+                            count > limit ? Theme.Colors.destructive : Theme.Colors.accent
                         )
                 }
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
             .background(
                 Theme.Colors.bgInset,
                 in: RoundedRectangle(cornerRadius: Theme.Radius.field)
