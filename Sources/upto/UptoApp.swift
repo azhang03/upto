@@ -14,6 +14,8 @@ struct UptoApp: App {
                 .environment(model)
                 .environment(library)
         }
+        .windowStyle(.hiddenTitleBar)
+        .defaultSize(width: 980, height: 640)
 
         MenuBarExtra {
             MenuBarView()

@@ -50,6 +50,18 @@ enum Theme {
         static let panel: CGFloat = 12
     }
 
+    enum Metrics {
+        // WindowConfigurator centers the close, minimize, and zoom
+        // buttons on this height.
+        static let headerHeight: CGFloat = 52
+        // Where the close button starts. The system default sits too
+        // close to the corner for the tall header.
+        static let trafficLightLeading: CGFloat = 20
+        // Leading inset that keeps the header content clear of the
+        // native traffic lights.
+        static let trafficLightInset: CGFloat = 100
+    }
+
     enum Fonts {
         static let sectionLabel = Font.system(size: 11, weight: .semibold)
         static let control = Font.system(size: 13, weight: .medium)

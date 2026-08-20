@@ -15,6 +15,7 @@ struct EditorFormView: View {
             ButtonsSection(model: model, focus: focus)
         }
         .formStyle(.grouped)
+        .withoutTopScrollEdge()
         .connectorViewport()
     }
 }
