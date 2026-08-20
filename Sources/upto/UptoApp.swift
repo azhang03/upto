@@ -31,13 +31,23 @@ struct UptoApp: App {
 }
 
 // A separate view so the icon reliably re-renders on state changes.
-// The antenna only shows unslashed while the presence is actually live.
+// The center of the cross is an open ring only while the presence is
+// actually live. The images load as NSImage with an explicit template
+// flag and point size, so the menu bar tints and scales them correctly.
 private struct MenuBarLabel: View {
     let presence: PresenceController
 
+    private static let connected = template("uptoTemplate")
+    private static let offline = template("uptoOfflineTemplate")
+
+    private static func template(_ name: String) -> NSImage {
+        let image = Bundle.module.image(forResource: name) ?? NSImage()
+        image.isTemplate = true
+        image.size = NSSize(width: 16, height: 16)
+        return image
+    }
+
     var body: some View {
-        Image(systemName: presence.isReady
-            ? "antenna.radiowaves.left.and.right"
-            : "antenna.radiowaves.left.and.right.slash")
+        Image(nsImage: presence.isReady ? Self.connected : Self.offline)
     }
 }

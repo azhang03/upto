@@ -32,6 +32,11 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/upto" "$APP/Contents/MacOS/upto"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
+# The app icon comes from the iconset. The menu bar images live in the
+# resource bundle that swift build makes for the executable target.
+iconutil -c icns Design/upto.iconset -o "$APP/Contents/Resources/AppIcon.icns"
+cp -R "$BIN_DIR/upto_upto.bundle" "$APP/Contents/Resources/"
+
 # Apple silicon refuses to run unsigned binaries. An ad hoc signature is enough.
 codesign --force --sign - "$APP"
 

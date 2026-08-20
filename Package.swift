@@ -12,7 +12,8 @@ let package = Package(
         .executableTarget(
             name: "upto",
             dependencies: ["UptoCore"],
-            path: "Sources/upto"
+            path: "Sources/upto",
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "uptoTests",
