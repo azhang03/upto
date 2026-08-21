@@ -15,12 +15,20 @@ struct ApplicationSection: View {
                     label: "Application ID",
                     isFocused: focus.wrappedValue == .applicationID
                 ) {
-                    TextField("", text: $applicationID, prompt: Text("From the Discord developer portal"))
-                        .textFieldStyle(.plain)
-                        .font(Theme.Fonts.mono)
-                        .foregroundStyle(Theme.Colors.textPrimary)
-                        .focused(focus, equals: .applicationID)
-                        .disabled(presence.isBusy)
+                    // A disabled text field does not draw its value,
+                    // so the connected state shows plain text instead.
+                    if presence.isBusy {
+                        Text(applicationID)
+                            .font(Theme.Fonts.mono)
+                            .foregroundStyle(Theme.Colors.textSecondary)
+                        Spacer(minLength: 0)
+                    } else {
+                        TextField("", text: $applicationID, prompt: Text("From the Discord developer portal"))
+                            .textFieldStyle(.plain)
+                            .font(Theme.Fonts.mono)
+                            .foregroundStyle(Theme.Colors.textPrimary)
+                            .focused(focus, equals: .applicationID)
+                    }
                 }
                 .connectorSource(.applicationID)
                 connectButton

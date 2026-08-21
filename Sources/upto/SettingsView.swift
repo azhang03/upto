@@ -7,7 +7,7 @@ struct SettingsView: View {
     @State private var loginItemError: String?
 
     var body: some View {
-        Form {
+        VStack(alignment: .leading, spacing: Theme.Spacing.m) {
             Toggle("Launch upto at login", isOn: $launchAtLogin)
                 .onChange(of: launchAtLogin) { _, wanted in
                     updateLoginItem(wanted)
@@ -16,11 +16,14 @@ struct SettingsView: View {
             if let loginItemError {
                 Text(loginItemError)
                     .font(.footnote)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Theme.Colors.destructive)
             }
         }
-        .padding(20)
-        .frame(width: 360)
+        .tint(Theme.Colors.accent)
+        .foregroundStyle(Theme.Colors.textPrimary)
+        .frame(width: 360, alignment: .leading)
+        .padding(Theme.Spacing.xl)
+        .background(Theme.Colors.bgWindow)
         .onAppear {
             launchAtLogin = SMAppService.mainApp.status == .enabled
         }

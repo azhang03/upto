@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct UptoApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @Environment(\.openWindow) private var openWindow
     @State private var presence = PresenceController()
     @State private var model = EditorModel()
     @State private var library = PresetLibrary()
@@ -16,6 +17,19 @@ struct UptoApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 980, height: 640)
+        .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About upto") {
+                    openWindow(id: "about")
+                }
+            }
+        }
+
+        Window("About upto", id: "about") {
+            AboutView()
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
 
         MenuBarExtra {
             MenuBarView()

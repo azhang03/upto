@@ -18,6 +18,35 @@ struct PresetsBar: View {
     @State private var pendingDelete: StoredPreset?
 
     var body: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            barRow
+            if let error = library.lastError {
+                Text(error)
+                    .font(.footnote)
+                    .foregroundStyle(Theme.Colors.destructive)
+            }
+        }
+        .padding(.horizontal, Theme.Spacing.l)
+        .padding(.vertical, Theme.Spacing.s)
+        .background(Theme.Colors.bgWindow)
+        .confirmationDialog(
+            "Delete the preset \"\(pendingDelete?.preset.name ?? "")\"?",
+            isPresented: deletePrompt,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let stored = pendingDelete {
+                    library.delete(id: stored.preset.id)
+                }
+                pendingDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingDelete = nil
+            }
+        }
+    }
+
+    private var barRow: some View {
         HStack(spacing: Theme.Spacing.m) {
             SectionHeader("Presets")
             ScrollView(.horizontal, showsIndicators: false) {
@@ -51,24 +80,6 @@ struct PresetsBar: View {
                             .foregroundStyle(Theme.Colors.textSecondary)
                     }
                 }
-            }
-        }
-        .padding(.horizontal, Theme.Spacing.l)
-        .padding(.vertical, Theme.Spacing.s)
-        .background(Theme.Colors.bgWindow)
-        .confirmationDialog(
-            "Delete the preset \"\(pendingDelete?.preset.name ?? "")\"?",
-            isPresented: deletePrompt,
-            titleVisibility: .visible
-        ) {
-            Button("Delete", role: .destructive) {
-                if let stored = pendingDelete {
-                    library.delete(id: stored.preset.id)
-                }
-                pendingDelete = nil
-            }
-            Button("Cancel", role: .cancel) {
-                pendingDelete = nil
             }
         }
     }
