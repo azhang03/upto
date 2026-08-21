@@ -23,7 +23,8 @@ struct EditorShellView: View {
         let focusedTargets = Set(focus?.previewTargets(in: activity) ?? [])
 
         VStack(spacing: 0) {
-            HeaderBar(
+            HeaderBar()
+            PresetsBar(
                 showingSavePrompt: $showingSavePrompt,
                 showingImporter: $showingImporter,
                 newPresetName: $newPresetName
