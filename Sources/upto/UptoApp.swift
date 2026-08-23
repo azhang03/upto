@@ -42,6 +42,7 @@ struct UptoApp: App {
 
         Settings {
             SettingsView()
+                .environment(presence)
         }
     }
 }
