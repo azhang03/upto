@@ -40,16 +40,30 @@ cp -R "$BIN_DIR/upto_upto.bundle" "$APP/Contents/Resources/"
 # Apple silicon refuses to run unsigned binaries. An ad hoc signature is enough.
 codesign --force --sign - "$APP"
 
-# The DMG shows the app next to an Applications shortcut for drag installs.
+# The DMG opens as a styled drag install window. Finder reads the layout
+# from the .DS_Store template that scripts/author-dmg-layout.sh saved.
+# The volume name and the background path must not change, because the
+# template points at both.
 STAGE="build/dmg-stage"
 rm -rf "$STAGE"
-mkdir -p "$STAGE"
+mkdir -p "$STAGE/.background"
 cp -R "$APP" "$STAGE/upto.app"
 ln -s /Applications "$STAGE/Applications"
+cp Design/dmg/background.tiff "$STAGE/.background/background.tiff"
+cp Design/dmg/DS_Store "$STAGE/.DS_Store"
+iconutil -c icns Design/upto.iconset -o "$STAGE/.VolumeIcon.icns"
 
+# Build read write first, flag the custom volume icon, then compress.
 DMG="build/upto-$VERSION.dmg"
-rm -f "$DMG"
-hdiutil create -volname "upto" -srcfolder "$STAGE" -ov -format UDZO "$DMG"
+RW_DMG="build/upto-rw.dmg"
+MOUNT_DIR="build/dmg-mount"
+rm -f "$DMG" "$RW_DMG"
+hdiutil create -volname "upto" -srcfolder "$STAGE" -ov -format UDRW "$RW_DMG"
+hdiutil attach -readwrite -noverify -nobrowse -mountpoint "$MOUNT_DIR" "$RW_DMG"
+xcrun SetFile -a C "$MOUNT_DIR"
+hdiutil detach "$MOUNT_DIR"
+hdiutil convert "$RW_DMG" -format UDZO -o "$DMG"
+rm -f "$RW_DMG"
 
 ZIP="build/upto-$VERSION.zip"
 rm -f "$ZIP"
