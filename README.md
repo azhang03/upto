@@ -1,30 +1,53 @@
-# upto
+<div align="center">
 
-upto is a macOS app that sets a custom Discord Rich Presence. It is built with SwiftUI.
+<h1>upto</h1>
 
-CustomRP for Windows inspired this project. upto is not a port. It is a new app made for the Mac.
+<img src="docs/images/app-icon.png" width="128" alt="The upto app icon, a green cross on a dark square">
 
-## Status
+<p><b>Custom Discord Rich Presence for the Mac.</b><br>
+A native SwiftUI app.</p>
 
-Early development. The current release is 0.1.0.
+<p>
+<a href="https://github.com/azhang03/upto/releases"><img src="https://img.shields.io/github/v/release/azhang03/upto?style=flat&labelColor=23262C&color=6ED0B1" alt="Latest release"></a>
+<img src="https://img.shields.io/badge/macOS-14%2B-6ED0B1?style=flat&labelColor=23262C&logo=apple&logoColor=F2F3F4" alt="Runs on macOS 14 or later">
+<img src="https://img.shields.io/badge/Apple%20silicon-arm64-6ED0B1?style=flat&labelColor=23262C" alt="Built for Apple silicon">
+<img src="https://img.shields.io/badge/SwiftUI-native-6ED0B1?style=flat&labelColor=23262C&logo=swift&logoColor=F2F3F4" alt="Built with SwiftUI">
+<a href="LICENSE"><img src="https://img.shields.io/github/license/azhang03/upto?style=flat&labelColor=23262C&color=6ED0B1" alt="MIT license"></a>
+</p>
+
+<img src="docs/images/editor-activity.png" width="760" alt="The main upto window with the presets row, the tabbed editor, and the live preview">
+
+</div>
+
+upto sets a custom Rich Presence on your Discord profile. You fill in the fields, press Push, and Discord shows your status. CustomRP for Windows inspired this project. upto is not a port. It is a new app made for the Mac, and it is in early development.
 
 ## Features
 
-- Edit every Rich Presence field: details, state, images with tooltips, timestamps, party size, and buttons
-- See a live preview that matches how Discord shows each activity type
-- Override the app name that Discord displays
-- Save presets, switch between them, and share them as `.upto` files
-- Start, stop, and switch presets from the menu bar
-- Launch at login and connect on start
-- Reconnect on its own when Discord restarts
+<table>
+<tr>
+<td width="50%">🎛️ <b>Full editor</b><br>Edit details, state, images with tooltips, timestamps, party size, and buttons.</td>
+<td width="50%">👀 <b>Live preview</b><br>See the presence as Discord shows it, for every activity type.</td>
+</tr>
+<tr>
+<td width="50%">📁 <b>Presets</b><br>Save setups, switch with one click, and share them as <code>.upto</code> files.</td>
+<td width="50%">📍 <b>Menu bar</b><br>Start, stop, and switch presets without opening the window.</td>
+</tr>
+<tr>
+<td width="50%">🚀 <b>Automation</b><br>Launch at login, connect on start, and reconnect when Discord restarts.</td>
+<td width="50%">🧹 <b>Clean uninstall</b><br>One button in Settings removes the app and every file it made.</td>
+</tr>
+</table>
 
-Planned for a later phase: support for Discord custom widgets.
+You can also override the app name that Discord displays. Support for Discord custom widgets is planned for a later phase.
 
-## Requirements
+## A closer look
 
-- macOS 14 Sonoma or later
-- A Mac with Apple silicon
-- The Discord desktop app
+<table>
+<tr>
+<td align="center"><img src="docs/images/timing-calendar.png" width="470" alt="The Timing tab with the themed calendar popover open"><br><sub>Pick timestamps in the themed calendar.</sub></td>
+<td align="center"><img src="docs/images/about.png" width="345" alt="The upto About window"><br><sub>The About window.</sub></td>
+</tr>
+</table>
 
 ## Install
 
@@ -45,3 +68,7 @@ You need macOS 14 or later and the Xcode Command Line Tools.
 3. Open `build/upto.app`.
 
 An app you build yourself opens without the security prompt.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
