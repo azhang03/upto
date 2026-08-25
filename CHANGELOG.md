@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.1 - 2026-08-24
+
+### Fixed
+
+- The app crashed at launch on macOS 26.5.1 and newer. The resource bundle inside the app had no Info.plist file, and these macOS versions refuse to load such a bundle. The build scripts now write that file.
+
+### Known limitations
+
+- The app is not signed. macOS blocks the first launch. The README explains the fix.
+- The build runs on Apple silicon only.
+
 ## 0.2.0 - 2026-08-23
 
 The look and feel release. The app now has its own visual identity.
