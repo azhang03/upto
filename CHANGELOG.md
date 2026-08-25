@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.2 - 2026-08-24
+
+### Fixed
+
+- The app still crashed at launch on some Macs after the 0.2.1 fix. The app loaded its menu bar images from a bundle nested inside the app, and some macOS versions refuse to open that bundle while the app carries the download quarantine flag. The app now loads these images from its own Resources folder.
+
+### Known limitations
+
+- The app is not signed. macOS blocks the first launch. The README explains the fix.
+- The build runs on Apple silicon only.
+
 ## 0.2.1 - 2026-08-24
 
 ### Fixed
