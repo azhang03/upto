@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- The app still crashed at launch on some Macs after the 0.2.1 fix. The app loaded its menu bar images from a bundle nested inside the app, and some macOS versions refuse to open that bundle while the app carries the download quarantine flag. The app now loads these images from its own Resources folder.
+- The app crashed at launch on every Mac except the machine that built it. The app searched for its image bundle in two places: the top level of the app package, and the build folder on the developer machine. Neither exists on a normal install. The app now loads its images from the Resources folder inside the app. The 0.2.1 fix targeted a wrong cause and did not help.
 
 ### Known limitations
 

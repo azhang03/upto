@@ -17,32 +17,11 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 iconutil -c icns Design/upto.iconset -o "$APP/Contents/Resources/AppIcon.icns"
 cp -R .build/release/upto_upto.bundle "$APP/Contents/Resources/"
 
-# The app loads the brand images from Resources first. Some macOS
-# versions refuse to open the nested bundle while the app carries the
-# download quarantine flag, so the PNG files must also sit here.
+# The app loads the brand images from these copies through Bundle.main.
+# The swift build resource accessor never looks inside Resources: it
+# checks the top level of the app package and the absolute .build path
+# of the build machine, so Bundle.module traps on every other Mac.
 cp .build/release/upto_upto.bundle/*.png "$APP/Contents/Resources/"
-
-# swift build makes that bundle without an Info.plist. macOS 26.5.1 and
-# newer refuse to load a bundle that has none, and the app then crashes
-# at launch. Write a minimal one.
-cat > "$APP/Contents/Resources/upto_upto.bundle/Info.plist" <<'PLIST'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleIdentifier</key>
-	<string>io.github.azhang03.upto.resources</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>upto_upto</string>
-	<key>CFBundlePackageType</key>
-	<string>BNDL</string>
-</dict>
-</plist>
-PLIST
 
 # Apple silicon refuses to run unsigned binaries. An ad hoc signature is enough for local use.
 codesign --force --sign - "$APP"
