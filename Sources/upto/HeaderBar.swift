@@ -9,7 +9,7 @@ struct HeaderBar: View {
     @Environment(EditorModel.self) private var model
 
     private static let mark: NSImage = {
-        let image = Bundle.module.image(forResource: "uptoTemplate") ?? NSImage()
+        let image = BrandImage.named("uptoTemplate")
         image.isTemplate = true
         return image
     }()

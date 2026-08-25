@@ -37,6 +37,11 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 iconutil -c icns Design/upto.iconset -o "$APP/Contents/Resources/AppIcon.icns"
 cp -R "$BIN_DIR/upto_upto.bundle" "$APP/Contents/Resources/"
 
+# The app loads the brand images from Resources first. Some macOS
+# versions refuse to open the nested bundle while the app carries the
+# download quarantine flag, so the PNG files must also sit here.
+cp "$BIN_DIR"/upto_upto.bundle/*.png "$APP/Contents/Resources/"
+
 # swift build makes that bundle without an Info.plist. macOS 26.5.1 and
 # newer refuse to load a bundle that has none, and the app then crashes
 # at launch. Write a minimal one.

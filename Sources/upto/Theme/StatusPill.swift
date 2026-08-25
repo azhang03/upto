@@ -11,7 +11,7 @@ struct StatusPill: View {
     private static let offlineMark = templateImage("uptoOfflineTemplate")
 
     private static func templateImage(_ name: String) -> NSImage {
-        let image = Bundle.module.image(forResource: name) ?? NSImage()
+        let image = BrandImage.named(name)
         image.isTemplate = true
         return image
     }

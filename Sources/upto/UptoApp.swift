@@ -58,7 +58,7 @@ private struct MenuBarLabel: View {
     private static let offline = template("uptoOfflineTemplate")
 
     private static func template(_ name: String) -> NSImage {
-        let image = Bundle.module.image(forResource: name) ?? NSImage()
+        let image = BrandImage.named(name)
         image.isTemplate = true
         image.size = NSSize(width: 16, height: 16)
         return image
